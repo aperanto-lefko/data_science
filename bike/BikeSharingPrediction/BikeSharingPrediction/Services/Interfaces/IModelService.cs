@@ -1,0 +1,22 @@
+﻿using BikeSharingPrediction.Models.Input;
+using BikeSharingPrediction.Models.Output;
+using Microsoft.ML.Data;
+using Microsoft.ML;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BikeSharingPrediction.Services.Interfaces
+{
+    internal interface IModelService
+    {
+        IEstimator<ITransformer> BuildDataPipeline();
+        ITransformer TrainModel(IDataView trainData);
+        CalibratedBinaryClassificationMetrics EvaluateModel(ITransformer model, IDataView testData);
+        void SaveModel(ITransformer model, DataViewSchema schema);
+        PredictionEngine<BikeRentalData, BikeRentalPrediction> CreatePredictionEngine(ITransformer model);
+    }
+}
+
