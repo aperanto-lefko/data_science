@@ -21,7 +21,7 @@ namespace BikeSharingPrediction.Services
             _mlContext = mlContext;
             _dataPath = Path.Combine(Directory.GetCurrentDirectory(),
                                    config["DataSettings:TrainingDataPath"]);
-            _testFraction = double.Parse(config["ModelSettings:TestFraction"]);
+            _testFraction = config.GetValue<double>("ModelSettings:TestFraction");
 
             if (!File.Exists(_dataPath))
                 throw new FileNotFoundException($"CSV file not found at: {_dataPath}");

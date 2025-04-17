@@ -12,11 +12,9 @@ namespace BikeSharingPrediction.Services.Interfaces
 {
     internal interface IModelService
     {
-        IEstimator<ITransformer> BuildDataPipeline();
         ITransformer TrainModel(IDataView trainData);
         CalibratedBinaryClassificationMetrics EvaluateModel(ITransformer model, IDataView testData);
-        void SaveModel(ITransformer model, DataViewSchema schema);
         PredictionEngine<BikeRentalData, BikeRentalPrediction> CreatePredictionEngine(ITransformer model);
     }
-}
+    }
 

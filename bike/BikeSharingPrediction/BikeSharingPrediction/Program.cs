@@ -3,6 +3,7 @@ using BikeSharingPrediction.Services.Interfaces;
 using BikeSharingPrediction.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ML;
+using System.Globalization;
 
 namespace BikeSharingPrediction
 {
@@ -10,65 +11,62 @@ namespace BikeSharingPrediction
     {
         static void Main(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-     .SetBasePath(Directory.GetCurrentDirectory())
-     .AddJsonFile("Config/appsettings.json")
-     .Build();
+            // Установка культуры для корректного парсинга чисел
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-            // Инициализация MLContext с seed из конфига
-            var mlContext = new MLContext(
-                seed: int.Parse(configuration["ModelSettings:Seed"]));
+            // Конфигурация
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            // Инициализация MLContext
+            var mlContext = new MLContext(seed: configuration.GetValue<int>("ModelSettings:Seed", 42));
 
             // Инициализация сервисов
-            IDataService dataService = new DataService(mlContext, configuration);
-            IModelService modelService = new ModelService(mlContext, configuration);
+            var dataService = new DataService(mlContext, configuration);
+            var modelService = new ModelService(mlContext, configuration);
 
             try
             {
-                // 1. Загрузка данных
                 Console.WriteLine("Loading data...");
                 var fullData = dataService.LoadData();
 
-                // 2. Разделение данных
                 Console.WriteLine("Splitting data...");
                 var splitData = dataService.SplitData(fullData);
 
-                // 3. Построение и обучение модели
                 Console.WriteLine("Training model...");
                 var model = modelService.TrainModel(splitData.TrainSet);
 
-                // 4. Оценка модели
                 Console.WriteLine("Evaluating model...");
                 var metrics = modelService.EvaluateModel(model, splitData.TestSet);
-                Console.WriteLine($"Model metrics:\n" +
-                                  $"  Accuracy: {metrics.Accuracy:P2}\n" +
-                                  $"  AUC: {metrics.AreaUnderRocCurve:P2}\n" +
-                                  $"  F1Score: {metrics.F1Score:P2}");
 
-                // 5. Сохранение модели
-                Console.WriteLine("Saving model...");
-                modelService.SaveModel(model, fullData.Schema);
+                Console.WriteLine($"Model metrics:");
+                Console.WriteLine($"  Accuracy: {metrics.Accuracy:P2}");
+                Console.WriteLine($"  AUC: {metrics.AreaUnderRocCurve:P2}");
+                Console.WriteLine($"  F1-Score: {metrics.F1Score:P2}");
 
-                // 6. Пример предсказания
+                // Пример предсказания
                 var predictionEngine = modelService.CreatePredictionEngine(model);
 
-                var sampleData = new BikeRentalData
+                var sample = new BikeRentalData
                 {
-                    Season = 3,      // Лето
-                    Month = 7,       // Июль
-                    Hour = 17,       // 5 PM
-                    Holiday = 0,     // Не выходной
-                    Weekday = 3,     // Среда
-                    WorkingDay = 1,  // Рабочий день
-                    WeatherCondition = 1, // Ясно
+                    Season = 3,
+                    Month = 7,
+                    Hour = 17,
+                    Holiday = 0,
+                    Weekday = 3,
+                    WorkingDay = 1,
+                    WeatherCondition = 1,
                     Temperature = 25.0f,
                     Humidity = 65.0f,
                     Windspeed = 10.0f
                 };
 
-                var prediction = predictionEngine.Predict(sampleData);
-                Console.WriteLine("\nSample prediction:");
-                Console.WriteLine($"  Predicted: {(prediction.PredictedRentalType ? "Long" : "Short")} term rental");
+                var prediction = predictionEngine.Predict(sample);
+                Console.WriteLine($"\nPrediction for sample:");
+                Console.WriteLine($"  Type: {(prediction.PredictedRentalType ? "Long" : "Short")}-term");
                 Console.WriteLine($"  Probability: {prediction.Probability:P2}");
             }
             catch (Exception ex)
