@@ -85,6 +85,7 @@ namespace Bikes
 
             // 4. Создание пайплайна обработки данных
             Console.WriteLine("Создание пайплайна обработки данных...");
+            // Объединяем все признаки в один вектор "Features"
             var dataPipeline = mlContext.Transforms
     .Concatenate(
         "Features",
@@ -98,7 +99,9 @@ namespace Bikes
         nameof(BikeRentalData.Temperature),
         nameof(BikeRentalData.Humidity),
         nameof(BikeRentalData.Windspeed))
+    // Нормализуем числовые признаки (приводим к диапазону 0-1)
     .Append(mlContext.Transforms.NormalizeMinMax("Features"))
+    // Преобразуем целевую переменную в Boolean
     .Append(mlContext.Transforms.Conversion.ConvertType(
         outputColumnName: "Label",
         inputColumnName: nameof(BikeRentalData.RentalType),
@@ -108,8 +111,11 @@ namespace Bikes
             Console.WriteLine("Обучение моделей...");
 
             // Создаем и обучаем несколько моделей
+            // FastTree (деревья решений)
             var fastTreeModel = TrainFastTree(mlContext, dataPipeline, trainData);
+            // LightGBM (градиентный бустинг)
             var lightGbmModel = TrainLightGbm(mlContext, dataPipeline, trainData);
+            // Логистическая регрессия
             var logisticRegressionModel = TrainLogisticRegression(mlContext, dataPipeline, trainData);
 
             // Оцениваем модели
@@ -179,11 +185,11 @@ namespace Bikes
                 mlContext.BinaryClassification.Trainers.FastTree(
                     labelColumnName: "Label",
                     featureColumnName: "Features",
-                    numberOfLeaves: 50,
+                    numberOfLeaves: 50, // Параметры дерева
                     numberOfTrees: 100,
                     learningRate: 0.1));
 
-            return trainingPipeline.Fit(trainData);
+            return trainingPipeline.Fit(trainData); // Обучение на данных
         }
 
         private static ITransformer TrainLightGbm(MLContext mlContext, IEstimator<ITransformer> pipeline, IDataView trainData)

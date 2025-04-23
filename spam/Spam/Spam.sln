@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spam", "Spam\Spam.csproj", "{25355E67-AA48-46F1-820F-D3D53615A014}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLModel_ConsoleApp", "MLModel_ConsoleApp\MLModel_ConsoleApp.csproj", "{45F89ACB-951F-456B-AAD7-5F10E9ECE939}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{25355E67-AA48-46F1-820F-D3D53615A014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25355E67-AA48-46F1-820F-D3D53615A014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25355E67-AA48-46F1-820F-D3D53615A014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25355E67-AA48-46F1-820F-D3D53615A014}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45F89ACB-951F-456B-AAD7-5F10E9ECE939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45F89ACB-951F-456B-AAD7-5F10E9ECE939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45F89ACB-951F-456B-AAD7-5F10E9ECE939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45F89ACB-951F-456B-AAD7-5F10E9ECE939}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A1D208A-04E7-424E-BF01-83AF7A327C37}
+	EndGlobalSection
+EndGlobal
